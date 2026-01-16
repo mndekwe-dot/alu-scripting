@@ -1,1 +1,1 @@
-# alu-scripting
+This explains About # alu-scripting
