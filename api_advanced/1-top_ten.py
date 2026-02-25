@@ -6,18 +6,29 @@ import requests
 def top_ten(subreddit):
     """Print the titles of the first 10 hot posts for a given subreddit.
 
-    Prints None if the subreddit is invalid.
+    Prints None if the subreddit is invalid or not found.
     """
-    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(subreddit)
-    headers = {"User-Agent": "linux:api_advanced.project:v1.0 (by /u/student)"}
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code != 200:
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (compatible; MyBot/1.0)"
+    }
+    try:
+        response = requests.get(
+            url,
+            headers=headers,
+            allow_redirects=False,
+            params={"limit": 10}
+        )
+        if response.status_code != 200:
+            print(None)
+            return
+        data = response.json()
+        posts = data.get("data", {}).get("children", [])
+        if not posts:
+            print(None)
+            return
+        for post in posts[:10]:
+            title = post.get("data", {}).get("title")
+            print(title)
+    except Exception:
         print(None)
-        return
-    data = response.json()
-    posts = data.get("data", {}).get("children", [])
-    if not posts:
-        print(None)
-        return
-    for post in posts[:10]:
-        print(post.get("data", {}).get("title"))
